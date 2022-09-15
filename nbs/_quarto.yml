@@ -1,0 +1,51 @@
+project:
+  type: website
+  output-dir: _docs
+  preview:
+    port: 3000
+    browser: false
+  render:
+    - index.ipynb
+    - crop_and_georeference.ipynb
+    - make_masks.ipynb
+    - train_model.ipynb
+      
+format:
+  html:
+    theme: spacelab
+    css: styles.css
+    toc: true
+    page-layout: full
+    
+website:
+  title: "Monitoring land cover changes using historical maps"
+  description: "Monitoring land cover changes using historical maps"
+  twitter-card: 
+    creator: "@mayrajeo"
+  open-graph: true
+  reader-mode: true
+  repo-branch: main
+  repo-subdir: notebooks
+  repo-url: https://github.com/mayrajeo/historical-maps/
+  repo-actions: [source]
+  navbar:
+    background: primary
+    search: true
+    right:
+      - icon: github
+        href: https://github.com/mayrajeo/historical-maps/
+  sidebar:
+    style: "floating"
+    contents:
+      - text: Introduction
+        file: index.ipynb
+      - section: "Workflow"
+        contents: 
+          - crop_and_georeference.ipynb
+          - make_masks.ipynb
+          - train_model.ipynb
+  page-navigation: true
+
+#metadata-files: 
+#  - sidebar.yml
+#  - custom.yml

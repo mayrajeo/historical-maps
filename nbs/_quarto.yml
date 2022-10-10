@@ -7,8 +7,10 @@ project:
   render:
     - index.ipynb
     - crop_and_georeference.ipynb
+    - color_extraction.ipynb
     - make_masks.ipynb
     - train_model.ipynb
+    - postprocessings.ipynb
       
 format:
   html:
@@ -42,8 +44,10 @@ website:
       - section: "Workflow"
         contents: 
           - crop_and_georeference.ipynb
+          - color_extraction.ipynb
           - make_masks.ipynb
           - train_model.ipynb
+          - postprocessings.ipynb
   page-navigation: true
 
 #metadata-files: 

@@ -11,6 +11,7 @@ project:
     - make_masks.ipynb
     - train_model.ipynb
     - postprocessings.ipynb
+    - change_analysis.ipynb
       
 format:
   html:
@@ -48,6 +49,7 @@ website:
           - make_masks.ipynb
           - train_model.ipynb
           - postprocessings.ipynb
+          - change_analysis.ipynb
   page-navigation: true
 
 #metadata-files: 

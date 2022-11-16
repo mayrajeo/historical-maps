@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Janne Mäyrä">
+<meta name="dcterms.date" content="2022-11-16">
+
+<title>Monitoring land cover changes using historical maps - Predictions and postprocessings</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./change_analysis.html" rel="next">
+<link href="./train_model.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="Monitoring land cover changes using historical maps - Predictions and postprocessings">
+<meta property="og:description" content="We then used the model trained previously to classify all historical maps from our study area. In order to reduce noise and make predictions smoother, some post-processing steps are required.">
+<meta property="og:site-name" content="Monitoring land cover changes using historical maps">
+<meta name="twitter:title" content="Monitoring land cover changes using historical maps - Predictions and postprocessings">
+<meta name="twitter:description" content="We then used the model trained previously to classify all historical maps from our study area. In order to reduce noise and make predictions smoother, some post-processing steps are required.">
+<meta name="twitter:creator" content="@mayrajeo">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Monitoring land cover changes using historical maps</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mayrajeo/historical-maps/"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Predictions and postprocessings</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Introduction</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Workflow</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./crop_and_georeference.html" class="sidebar-item-text sidebar-link">Crop and georeference old maps</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./color_extraction.html" class="sidebar-item-text sidebar-link">Extracting colors with simple thresholding</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./make_masks.html" class="sidebar-item-text sidebar-link">Create reference masks</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./train_model.html" class="sidebar-item-text sidebar-link">Train model</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./postprocessings.html" class="sidebar-item-text sidebar-link active">Predictions and postprocessings</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./change_analysis.html" class="sidebar-item-text sidebar-link">Change analysis</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#evaluate-results-before-post-processing" id="toc-evaluate-results-before-post-processing" class="nav-link active" data-scroll-target="#evaluate-results-before-post-processing"><span class="toc-section-number">1</span>  Evaluate results before post-processing</a></li>
+  <li><a href="#postprocessing" id="toc-postprocessing" class="nav-link" data-scroll-target="#postprocessing"><span class="toc-section-number">2</span>  Postprocessing</a>
+  <ul class="collapse">
+  <li><a href="#fields" id="toc-fields" class="nav-link" data-scroll-target="#fields"><span class="toc-section-number">2.1</span>  Fields</a></li>
+  <li><a href="#mires" id="toc-mires" class="nav-link" data-scroll-target="#mires"><span class="toc-section-number">2.2</span>  Mires</a></li>
+  <li><a href="#roads" id="toc-roads" class="nav-link" data-scroll-target="#roads"><span class="toc-section-number">2.3</span>  Roads</a></li>
+  <li><a href="#watercourses" id="toc-watercourses" class="nav-link" data-scroll-target="#watercourses"><span class="toc-section-number">2.4</span>  Watercourses</a></li>
+  <li><a href="#water-bodies" id="toc-water-bodies" class="nav-link" data-scroll-target="#water-bodies"><span class="toc-section-number">2.5</span>  Water bodies</a></li>
+  <li><a href="#all-together" id="toc-all-together" class="nav-link" data-scroll-target="#all-together"><span class="toc-section-number">2.6</span>  All together:</a></li>
+  </ul></li>
+  <li><a href="#evaluating-post-processed-test-set" id="toc-evaluating-post-processed-test-set" class="nav-link" data-scroll-target="#evaluating-post-processed-test-set"><span class="toc-section-number">3</span>  Evaluating post-processed test set</a></li>
+  <li><a href="#generate-polygon-and-line-data" id="toc-generate-polygon-and-line-data" class="nav-link" data-scroll-target="#generate-polygon-and-line-data"><span class="toc-section-number">4</span>  Generate polygon and line data</a>
+  <ul class="collapse">
+  <li><a href="#roads-1" id="toc-roads-1" class="nav-link" data-scroll-target="#roads-1"><span class="toc-section-number">4.1</span>  Roads</a></li>
+  <li><a href="#watercourses-1" id="toc-watercourses-1" class="nav-link" data-scroll-target="#watercourses-1"><span class="toc-section-number">4.2</span>  Watercourses</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mayrajeo/historical-maps/blob/main/notebooks/postprocessings.ipynb" class="toc-action">View source</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Predictions and postprocessings</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Janne Mäyrä </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 16, 2022</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>We then used the model trained previously to classify all historical maps from our study area. In order to reduce noise and make predictions smoother, some post-processing steps are required. For this, we used morphological operations such as <strong>closing</strong>, and <strong>erosion</strong>, as well as <strong>low-pass filtering</strong> with suitable kernel sizes.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio <span class="im">as</span> rio</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> box</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio.mask <span class="im">as</span> rio_mask</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="evaluate-results-before-post-processing" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Evaluate results before post-processing</h1>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dice(targs, preds, cls_id):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    inter <span class="op">=</span> (np.where(targs<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)<span class="op">*</span>np.where(preds<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)).<span class="bu">sum</span>()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    union <span class="op">=</span> (np.where(targs<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)<span class="op">+</span>np.where(preds<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)).<span class="bu">sum</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">2</span> <span class="op">*</span> inter<span class="op">/</span>union <span class="cf">if</span> union <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> jaccard(targs, preds, cls_id):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    inter <span class="op">=</span> (np.where(targs<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)<span class="op">*</span>np.where(preds<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)).<span class="bu">sum</span>()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    union <span class="op">=</span> (np.where(targs<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)<span class="op">+</span>np.where(preds<span class="op">==</span>cls_id, <span class="dv">1</span>, <span class="dv">0</span>)).<span class="bu">sum</span>()</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> inter<span class="op">/</span>(union<span class="op">-</span>inter) <span class="cf">if</span> union <span class="op">&gt;</span> <span class="dv">0</span> <span class="cf">else</span> <span class="va">None</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rio.<span class="bu">open</span>(<span class="st">'../data/reference_masks/val_mask_1965.tif'</span>) <span class="im">as</span> test_src:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    bounds_65 <span class="op">=</span> test_src.bounds</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> rio.<span class="bu">open</span>(<span class="st">'../results/raw/213405_1965.tif'</span>) <span class="im">as</span> pred_src:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        bounds_test <span class="op">=</span> pred_src.bounds</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        preds_65, _ <span class="op">=</span> rio_mask.mask(pred_src, [box(<span class="op">*</span>bounds_test).intersection(box(<span class="op">*</span>bounds_65))], crop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        preds_65 <span class="op">=</span> preds_65[<span class="dv">0</span>]</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    test_mask_65, _ <span class="op">=</span> rio_mask.mask(test_src, [box(<span class="op">*</span>bounds_test).intersection(box(<span class="op">*</span>bounds_65))], crop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    test_mask_65 <span class="op">=</span> test_mask_65[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> colors</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> colors.ListedColormap([<span class="st">'white'</span>, <span class="st">'tab:orange'</span>, <span class="st">'tab:grey'</span>, <span class="st">'tab:red'</span>, <span class="st">'tab:cyan'</span>, <span class="st">'tab:blue'</span>])</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>bounds<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> colors.BoundaryNorm(bounds, cmap.N)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(test_mask_65, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'Targets 65'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(preds_65, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">'Predictions 65'</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rio.<span class="bu">open</span>(<span class="st">'../data/reference_masks/val_mask_1984.tif'</span>) <span class="im">as</span> test_src:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    bounds_84 <span class="op">=</span> test_src.bounds</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> rio.<span class="bu">open</span>(<span class="st">'../results/raw/213405_1984.tif'</span>) <span class="im">as</span> pred_src:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        bounds_test <span class="op">=</span> pred_src.bounds</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        preds_84, _ <span class="op">=</span> rio_mask.mask(pred_src, [box(<span class="op">*</span>bounds_test).intersection(box(<span class="op">*</span>bounds_84))], crop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        preds_84 <span class="op">=</span> preds_84[<span class="dv">0</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    test_mask_84, _ <span class="op">=</span> rio_mask.mask(test_src, [box(<span class="op">*</span>bounds_test).intersection(box(<span class="op">*</span>bounds_84))], crop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    test_mask_84 <span class="op">=</span> test_mask_84[<span class="dv">0</span>]</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(test_mask_84, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'Targets 84'</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(preds_84, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">'Predictions 84'</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Evaluate predictions before post-processing.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>classes <span class="op">=</span> [<span class="st">'Fields'</span>, <span class="st">'Mires'</span>, <span class="st">'Roads'</span>, <span class="st">'Watercourses'</span>, <span class="st">'Water bodies'</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>dices_65 <span class="op">=</span> []</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>dices_84 <span class="op">=</span> []</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>ious_65 <span class="op">=</span> []</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ious_84 <span class="op">=</span> []</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="dv">5</span>):</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    dice_65 <span class="op">=</span> dice(test_mask_65, preds_65, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    dice_84 <span class="op">=</span> dice(test_mask_84, preds_84, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    dices_65.append(dice_65)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    dices_84.append(dice_84)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    iou_65 <span class="op">=</span> jaccard(test_mask_65, preds_65, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    iou_84 <span class="op">=</span> jaccard(test_mask_84, preds_84, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    ious_65.append(iou_65)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    ious_84.append(iou_84)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Results for class </span><span class="sc">{</span>classes[c]<span class="sc">}</span><span class="ss">:'</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Dice: 65 map: </span><span class="sc">{</span>dice_65<span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span>dice_84<span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(dice_65<span class="op">+</span>dice_84)<span class="op">/</span><span class="dv">2</span><span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Jaccard: 65 map: </span><span class="sc">{</span>iou_65<span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span>iou_84<span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(iou_65<span class="op">+</span>iou_84)<span class="op">/</span><span class="dv">2</span><span class="sc">:.3f}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Overall results:'</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Dice: 65 map: </span><span class="sc">{</span><span class="bu">sum</span>(dices_65)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span><span class="bu">sum</span>(dices_84)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(<span class="bu">sum</span>(dices_65)<span class="op">+</span><span class="bu">sum</span>(dices_84))<span class="op">/</span><span class="dv">10</span><span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Jaccard: 65 map: </span><span class="sc">{</span><span class="bu">sum</span>(ious_65)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span><span class="bu">sum</span>(ious_84)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(<span class="bu">sum</span>(ious_65)<span class="op">+</span><span class="bu">sum</span>(ious_84))<span class="op">/</span><span class="dv">10</span><span class="sc">:.3f}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Results for class Fields:
+Dice: 65 map: 0.941, 84 map: 0.941, overall 0.941
+Jaccard: 65 map: 0.888, 84 map: 0.889, overall 0.889
+
+Results for class Mires:
+Dice: 65 map: 0.863, 84 map: 0.803, overall 0.833
+Jaccard: 65 map: 0.759, 84 map: 0.671, overall 0.715
+
+Results for class Roads:
+Dice: 65 map: 0.831, 84 map: 0.779, overall 0.805
+Jaccard: 65 map: 0.711, 84 map: 0.638, overall 0.674
+
+Results for class Watercourses:
+Dice: 65 map: 0.709, 84 map: 0.688, overall 0.699
+Jaccard: 65 map: 0.550, 84 map: 0.524, overall 0.537
+
+Results for class Water bodies:
+Dice: 65 map: 0.987, 84 map: 0.984, overall 0.986
+Jaccard: 65 map: 0.975, 84 map: 0.969, overall 0.972
+
+Overall results:
+Dice: 65 map: 0.866, 84 map: 0.839, overall 0.853
+Jaccard: 65 map: 0.777, 84 map: 0.738, overall 0.757</code></pre>
+</div>
+</div>
+</section>
+<section id="postprocessing" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Postprocessing</h1>
+<p>The postprocessing steps depend on the land cover class and how they are layered in the final products. Roads and watercourses are such classes that the final products for these are line geometries, whereas the other classes can be either raster data or polygon data. Most watercourses (e.g.&nbsp;ditches) do not split mires and fields into multiple sections, whereas roads split these classes into multiple different segments.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ex_data <span class="op">=</span> <span class="st">'../results/raw/213406_1965_ei_rajoja.tif'</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rio.<span class="bu">open</span>(ex_data) <span class="im">as</span> src:</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> src.read(<span class="dv">1</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ex_map <span class="op">=</span> <span class="st">'../data/maps/aligned_maps/213406_1965_ei_rajoja.tif'</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rio.<span class="bu">open</span>(ex_map) <span class="im">as</span> src:</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    mapdata <span class="op">=</span> np.moveaxis(src.read(), <span class="dv">0</span>, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>mapdata <span class="op">=</span> mapdata[<span class="dv">32</span>:, <span class="dv">32</span>:]    </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data[:mapdata.shape[<span class="dv">0</span>], :mapdata.shape[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="fields" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="fields"><span class="header-section-number">2.1</span> Fields</h2>
+<p>Comparison with automatically extracted orange color.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plt.imshow(tempmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-9-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hsv_field_bot <span class="op">=</span> np.array([<span class="dv">15</span>,<span class="dv">100</span>,<span class="dv">100</span>])</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>hsv_field_top <span class="op">=</span> np.array([<span class="dv">25</span>,<span class="dv">255</span>,<span class="dv">255</span>])</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>tempmap <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>hsv_ex <span class="op">=</span> cv2.cvtColor(tempmap, cv2.COLOR_RGB2HSV)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>field_mask <span class="op">=</span> cv2.inRange(hsv_ex, hsv_field_bot, hsv_field_top)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>field_mask <span class="op">=</span> field_mask.astype(np.int16)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>), dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs.flatten(): </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    a.set_xticks([])</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    a.set_yticks([])</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>field_mask[field_mask<span class="op">&lt;</span><span class="dv">128</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>field_mask[field_mask<span class="op">&gt;</span><span class="dv">128</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].imshow(field_mask, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>tempmap <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> tempmap.copy()</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>temp[field_mask <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].imshow(temp, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'Automatical color extraxtion'</span>)</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'Unprocessed U-net results'</span>)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> np.empty(data.shape)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> fields.astype(np.uint8)</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>fields[data<span class="op">==</span><span class="dv">1</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> fields[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>]</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].imshow(fields, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> tempmap.copy()</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>temp[fields <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].imshow(temp, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-10-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>During postprocessing, include watercourses for these layers. <code>MORPH.OPEN</code> (erosion followed by dilation) with 11x11 kernel is sufficient to remove watercourses from non-field areas.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> np.empty(data.shape)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>fields[data<span class="op">==</span><span class="dv">1</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fields[data<span class="op">==</span><span class="dv">4</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> fields[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>]</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>fields <span class="op">=</span> fields.astype(np.uint8)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>tempmap <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>tempmap[fields <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(fields)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(tempmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-11-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Example postprocessing chain looks like this.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">5</span>,<span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">200</span>, figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">12</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs.flatten(): </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    a.set_xticks([])</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    a.set_yticks([])</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].imshow(fields, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'Raw image'</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'Raw map'</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].imshow(tempmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>er_kernel <span class="op">=</span> cv2.getStructuringElement(cv2.MORPH_CROSS, (<span class="dv">11</span>,<span class="dv">11</span>))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>dil_kernel <span class="op">=</span> cv2.getStructuringElement(cv2.MORPH_RECT, (<span class="dv">11</span>,<span class="dv">11</span>))</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.erode(fields, er_kernel)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].imshow(open_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'Erosion with 11x11 kernel'</span>)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>temp_open <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>temp_open[open_ex <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].imshow(temp_open, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.morphologyEx(open_ex, cv2.MORPH_OPEN, np.ones((<span class="dv">3</span>,<span class="dv">3</span>)))</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.dilate(open_ex, dil_kernel)</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].imshow(open_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].set_title(<span class="st">'Dilation with 11x11 kernel'</span>)</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>temp_open <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>temp_open[open_ex <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">1</span>].imshow(temp_open, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>lpf_kernel <span class="op">=</span> np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.float32)<span class="op">/</span><span class="dv">49</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>lpf_ex <span class="op">=</span> cv2.filter2D(open_ex, <span class="op">-</span><span class="dv">1</span>, lpf_kernel)</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].imshow(lpf_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].set_title(<span class="st">'Low-pass filter with 7x7 kernel'</span>)</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>temp_lpf <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>temp_lpf[lpf_ex <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">1</span>].imshow(temp_lpf, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>roadclip <span class="op">=</span> lpf_ex.copy()</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>roadclip[data[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>] <span class="op">==</span> <span class="dv">3</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">4</span>,<span class="dv">0</span>].imshow(roadclip, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">4</span>,<span class="dv">0</span>].set_title(<span class="st">'Clipping with roads'</span>)</span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>temp_lpf[data[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>] <span class="op">==</span> <span class="dv">3</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">4</span>,<span class="dv">1</span>].imshow(temp_lpf, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'../data/figures/field_postproc.jpg'</span>, dpi<span class="op">=</span><span class="dv">300</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="mires" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="mires"><span class="header-section-number">2.2</span> Mires</h2>
+<p>Similar to fields, watercourses running through mires do not split mires into multiple sections.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mires <span class="op">=</span> np.empty(data.shape)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>mires[data<span class="op">==</span><span class="dv">2</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>mires[data<span class="op">==</span><span class="dv">4</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>mires <span class="op">=</span> mires[<span class="dv">4000</span>:<span class="dv">6000</span>, <span class="dv">2000</span>:<span class="dv">4000</span>]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>mires <span class="op">=</span> mires.astype(np.uint8)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>tempmap <span class="op">=</span> mapdata[<span class="dv">4000</span>:<span class="dv">6000</span>, <span class="dv">2000</span>:<span class="dv">4000</span>,:].copy()</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>tempmap[mires <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(mires)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(tempmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-13-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">200</span>, figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">12</span>))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs.flatten(): a.axis(<span class="st">'off'</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].imshow(mires, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'Raw image'</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'Raw map'</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].imshow(tempmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>er_kernel <span class="op">=</span> cv2.getStructuringElement(cv2.MORPH_CROSS, (<span class="dv">13</span>,<span class="dv">13</span>))</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>dil_kernel <span class="op">=</span> cv2.getStructuringElement(cv2.MORPH_RECT, (<span class="dv">13</span>,<span class="dv">13</span>))</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.erode(mires, er_kernel)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.morphologyEx(open_ex, cv2.MORPH_OPEN, np.ones((<span class="dv">3</span>,<span class="dv">3</span>)))</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.dilate(open_ex, dil_kernel)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].imshow(open_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'Opening with 11x11 kernel'</span>)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>temp_open <span class="op">=</span>  mapdata[<span class="dv">4000</span>:<span class="dv">6000</span>, <span class="dv">2000</span>:<span class="dv">4000</span>,:].copy()</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>temp_open[open_ex <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].imshow(temp_open, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>lpf_kernel <span class="op">=</span> np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.float32)<span class="op">/</span><span class="dv">49</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>lpf_ex <span class="op">=</span> cv2.filter2D(open_ex, <span class="op">-</span><span class="dv">1</span>, lpf_kernel)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].imshow(lpf_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].set_title(<span class="st">'Low-pass filter with 7x7 kernel'</span>)</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>temp_lpf <span class="op">=</span>  mapdata[<span class="dv">4000</span>:<span class="dv">6000</span>, <span class="dv">2000</span>:<span class="dv">4000</span>,:].copy()</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>temp_lpf[lpf_ex <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">1</span>].imshow(temp_lpf, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>roadclip <span class="op">=</span> lpf_ex.copy()</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>roadclip[data[<span class="dv">4000</span>:<span class="dv">6000</span>, <span class="dv">2000</span>:<span class="dv">4000</span>] <span class="op">==</span> <span class="dv">3</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].imshow(roadclip, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].set_title(<span class="st">'Clipping with roads'</span>)</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>temp_lpf[data[<span class="dv">4000</span>:<span class="dv">6000</span>, <span class="dv">2000</span>:<span class="dv">4000</span>] <span class="op">==</span> <span class="dv">3</span>] <span class="op">=</span> <span class="dv">255</span></span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">1</span>].imshow(temp_lpf, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="roads" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="roads"><span class="header-section-number">2.3</span> Roads</h2>
+<p>Roads are postprocessed with <code>MORPH.CLOSE</code> (dilation followed by erosion), LPF and erosion.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>roads <span class="op">=</span> np.empty(data.shape)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>roads[data<span class="op">==</span><span class="dv">3</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>roads <span class="op">=</span> roads[<span class="dv">300</span>:<span class="dv">1300</span>, <span class="dv">4500</span>:<span class="dv">5500</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>roads <span class="op">=</span> roads.astype(np.uint8)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>tempmap <span class="op">=</span> mapdata[<span class="dv">300</span>:<span class="dv">1300</span>, <span class="dv">4500</span>:<span class="dv">5500</span>,:].copy()</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>tempmap[roads <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(roads)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(tempmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-15-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">150</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">16</span>))</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs.flatten(): a.axis(<span class="st">'off'</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].imshow(roads, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'Raw image'</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'Raw map'</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].imshow(tempmap)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.uint8)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.morphologyEx(roads, cv2.MORPH_CLOSE, kernel)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>temp_open <span class="op">=</span> mapdata[<span class="dv">300</span>:<span class="dv">1300</span>, <span class="dv">4500</span>:<span class="dv">5500</span>,:].copy()</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>temp_open[open_ex <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].imshow(open_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'Closing with 7x7 kernel'</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].imshow(temp_open, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>lpf_kernel <span class="op">=</span> np.ones((<span class="dv">5</span>,<span class="dv">5</span>), np.float32)<span class="op">/</span><span class="dv">25</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>lpf_ex <span class="op">=</span> cv2.filter2D(open_ex, <span class="op">-</span><span class="dv">1</span>, lpf_kernel)</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>temp_lpf <span class="op">=</span> temp_open.copy()</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>temp_lpf[lpf_ex <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].imshow(lpf_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].set_title(<span class="st">'Low-pass filter with 5x5 kernel'</span>)</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">1</span>].imshow(temp_lpf, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>eroded <span class="op">=</span> cv2.erode(lpf_ex, np.ones((<span class="dv">3</span>,<span class="dv">3</span>), np.uint8), iterations<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>temp_er <span class="op">=</span> mapdata[<span class="dv">300</span>:<span class="dv">1300</span>, <span class="dv">4500</span>:<span class="dv">5500</span>,:].copy()</span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>temp_er[eroded <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].imshow(eroded, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].set_title(<span class="st">'Erosion with 3x3 kernel'</span>)</span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">1</span>].imshow(temp_er, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Next step is to skeletonize roads in order to generate line geometries from them.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage.morphology <span class="im">import</span> skeletonize, medial_axis, thin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>skeletonized <span class="op">=</span> skeletonize(eroded)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs: a.axis(<span class="st">'off'</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(eroded, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(skeletonized, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-18-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>These are then polygonized and merged into polygon data, that can then be used to get line geometries.</p>
+</section>
+<section id="watercourses" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="watercourses"><span class="header-section-number">2.4</span> Watercourses</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>watercourses <span class="op">=</span> np.empty(data.shape)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>watercourses[data<span class="op">==</span><span class="dv">4</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>watercourses <span class="op">=</span> watercourses[<span class="dv">2500</span>:<span class="dv">3500</span>,<span class="dv">2000</span>:<span class="dv">3000</span>]</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>watercourses <span class="op">=</span> watercourses.astype(np.uint8)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>tempmap <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>tempmap[watercourses <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(watercourses)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(tempmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-19-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">4</span>,<span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">150</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">16</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs.flatten(): a.axis(<span class="st">'off'</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].imshow(watercourses, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'Raw image'</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'Raw map'</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].imshow(tempmap)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.uint8)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.morphologyEx(watercourses, cv2.MORPH_CLOSE, kernel)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>temp_open <span class="op">=</span> tempmap.copy()</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>temp_open[open_ex <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].imshow(open_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'Closing with 7x7 kernel'</span>)</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].imshow(temp_open, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>lpf_kernel <span class="op">=</span> np.ones((<span class="dv">5</span>,<span class="dv">5</span>), np.float32)<span class="op">/</span><span class="dv">25</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>lpf_ex <span class="op">=</span> cv2.filter2D(open_ex, <span class="op">-</span><span class="dv">1</span>, lpf_kernel)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>temp_lpf <span class="op">=</span>  mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>temp_lpf[lpf_ex <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].imshow(lpf_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].set_title(<span class="st">'Low-pass filter with 5x5 kernel'</span>)</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">1</span>].imshow(temp_lpf, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>eroded <span class="op">=</span> cv2.erode(lpf_ex, np.ones((<span class="dv">3</span>,<span class="dv">3</span>), np.uint8), iterations<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>temp_er <span class="op">=</span> mapdata[<span class="dv">2500</span>:<span class="dv">3500</span>, <span class="dv">2000</span>:<span class="dv">3000</span>,:].copy()</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>temp_er[eroded <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].imshow(eroded, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">0</span>].set_title(<span class="st">'Erosion with 3x3 kernel'</span>)</span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>,<span class="dv">1</span>].imshow(temp_er, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-20-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Visually compare the different skeletonizing methods: <code>skimage.morphology.skeletonize</code>, <code>skimage.morphology.thin</code> and <code>skimage.morphology.medial_axis</code>.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>skeletonized <span class="op">=</span> skeletonize(eroded[<span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>, <span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>])</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>thinned <span class="op">=</span> thin(eroded[<span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>, <span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>])</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>med_axis <span class="op">=</span> medial_axis(eroded[<span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>, <span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>])</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">2</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">12</span>), dpi<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs.flatten(): a.axis(<span class="st">'off'</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].imshow(eroded[<span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>, <span class="dv">350</span>:<span class="op">-</span><span class="dv">350</span>], interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'Original'</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].imshow(skeletonized, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'Skeletonized'</span>)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].imshow(thinned, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'Thinned'</span>)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].imshow(med_axis, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].set_title(<span class="st">'Medial axis'</span>)</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-21-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Seems that no major differences between the methods,</p>
+</section>
+<section id="water-bodies" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="water-bodies"><span class="header-section-number">2.5</span> Water bodies</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>waterbodies <span class="op">=</span> np.empty(data.shape)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>waterbodies[data<span class="op">==</span><span class="dv">5</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>waterbodies <span class="op">=</span> waterbodies[<span class="dv">1500</span>:<span class="dv">2500</span>, <span class="dv">1000</span>:<span class="dv">2000</span>]</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>waterbodies <span class="op">=</span> waterbodies.astype(np.uint8)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">150</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>tempmap <span class="op">=</span> mapdata[<span class="dv">1500</span>:<span class="dv">2500</span>, <span class="dv">1000</span>:<span class="dv">2000</span>,:].copy()</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>tempmap[waterbodies <span class="op">!=</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(waterbodies)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(tempmap)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;matplotlib.image.AxesImage&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-22-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">3</span>,<span class="dv">2</span>, dpi<span class="op">=</span><span class="dv">300</span>, figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">12</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs.flatten(): a.axis(<span class="st">'off'</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].imshow(waterbodies, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">0</span>].set_title(<span class="st">'Raw image'</span>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].set_title(<span class="st">'Raw map'</span>)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>,<span class="dv">1</span>].imshow(tempmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>kernel <span class="op">=</span> np.ones((<span class="dv">11</span>,<span class="dv">11</span>), np.uint8)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>open_ex <span class="op">=</span> cv2.morphologyEx(waterbodies, cv2.MORPH_OPEN, kernel)</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].imshow(open_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">0</span>].set_title(<span class="st">'Opening with 11x11 kernel'</span>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>temp_open <span class="op">=</span> mapdata[<span class="dv">1500</span>:<span class="dv">2500</span>, <span class="dv">1000</span>:<span class="dv">2000</span>,:].copy()</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>temp_open[open_ex <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>,<span class="dv">1</span>].imshow(temp_open, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>lpf_kernel <span class="op">=</span> np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.float32)<span class="op">/</span><span class="dv">49</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>lpf_ex <span class="op">=</span> cv2.filter2D(open_ex, <span class="op">-</span><span class="dv">1</span>, lpf_kernel)</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].imshow(lpf_ex, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">0</span>].set_title(<span class="st">'Low-pass filter with 9x9 kernel'</span>)</span>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>temp_lpf <span class="op">=</span> mapdata[<span class="dv">1500</span>:<span class="dv">2500</span>, <span class="dv">1000</span>:<span class="dv">2000</span>,:].copy()</span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>temp_lpf[lpf_ex <span class="op">==</span> <span class="dv">0</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>,<span class="dv">1</span>].imshow(temp_lpf, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-23-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="all-together" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="all-together"><span class="header-section-number">2.6</span> All together:</h2>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> run_postproc_chain(inpath, outpath):</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> rio.<span class="bu">open</span>(inpath) <span class="im">as</span> src:</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>        data <span class="op">=</span> src.read()[<span class="dv">0</span>]</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>        prof <span class="op">=</span> src.profile</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    fields <span class="op">=</span> np.where((data<span class="op">==</span><span class="dv">1</span>) <span class="op">|</span> (data<span class="op">==</span><span class="dv">4</span>), <span class="dv">1</span>, <span class="dv">0</span>).astype(np.uint8)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    mires <span class="op">=</span> np.where((data<span class="op">==</span><span class="dv">2</span>) <span class="op">|</span> (data<span class="op">==</span><span class="dv">4</span>), <span class="dv">1</span>, <span class="dv">0</span>).astype(np.uint8)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>    roads <span class="op">=</span> np.where(data<span class="op">==</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">0</span>).astype(np.uint8)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    watercourses <span class="op">=</span> np.where(data<span class="op">==</span><span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">0</span>).astype(np.uint8)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    waterbodies <span class="op">=</span> np.where(data<span class="op">==</span><span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">0</span>).astype(np.uint8)</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    er_kernel <span class="op">=</span> cv2.getStructuringElement(cv2.MORPH_CROSS, (<span class="dv">11</span>,<span class="dv">11</span>))</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    dil_kernel <span class="op">=</span> cv2.getStructuringElement(cv2.MORPH_RECT, (<span class="dv">11</span>,<span class="dv">11</span>))</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    fields <span class="op">=</span> cv2.erode(fields, er_kernel)</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>    fields <span class="op">=</span> cv2.morphologyEx(fields, cv2.MORPH_OPEN, np.ones((<span class="dv">3</span>,<span class="dv">3</span>)))</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    fields <span class="op">=</span> cv2.dilate(fields, dil_kernel)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    fields <span class="op">=</span> cv2.filter2D(fields, <span class="op">-</span><span class="dv">1</span>,  np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.float32)<span class="op">/</span><span class="dv">49</span>)</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    mires <span class="op">=</span> cv2.erode(mires, er_kernel)</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>    mires <span class="op">=</span> cv2.morphologyEx(mires, cv2.MORPH_OPEN, np.ones((<span class="dv">3</span>,<span class="dv">3</span>)))</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>    mires <span class="op">=</span> cv2.dilate(mires, dil_kernel)    </span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    mires <span class="op">=</span> cv2.filter2D(mires, <span class="op">-</span><span class="dv">1</span>,  np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.float32)<span class="op">/</span><span class="dv">49</span>)</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>    roads <span class="op">=</span> cv2.morphologyEx(roads, cv2.MORPH_CLOSE, np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.uint8))</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>    roads <span class="op">=</span> cv2.filter2D(roads, <span class="op">-</span><span class="dv">1</span>, np.ones((<span class="dv">5</span>,<span class="dv">5</span>), np.float32)<span class="op">/</span><span class="dv">25</span>)</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>    watercourses <span class="op">=</span> cv2.morphologyEx(watercourses, cv2.MORPH_CLOSE, np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.uint8))</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>    watercourses <span class="op">=</span> cv2.filter2D(watercourses, <span class="op">-</span><span class="dv">1</span>, np.ones((<span class="dv">5</span>,<span class="dv">5</span>), np.float32)<span class="op">/</span><span class="dv">25</span>)</span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>    waterbodies <span class="op">=</span> cv2.morphologyEx(waterbodies, cv2.MORPH_OPEN, np.ones((<span class="dv">11</span>,<span class="dv">11</span>), np.uint8))</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>    waterbodies <span class="op">=</span> cv2.filter2D(waterbodies, <span class="op">-</span><span class="dv">1</span>,  np.ones((<span class="dv">7</span>,<span class="dv">7</span>), np.float32)<span class="op">/</span><span class="dv">49</span>)</span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>    prof.update({<span class="st">'count'</span>: <span class="dv">5</span>})</span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Roads split these classes into multiple geometries</span></span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>    fields[roads <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>    mires[roads <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Clip with waterbodies also</span></span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>    fields[waterbodies <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>    mires[waterbodies <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> rio.<span class="bu">open</span>(outpath, <span class="st">'w'</span>, <span class="op">**</span>prof) <span class="im">as</span> dest:</span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a>        dest.write(fields, <span class="dv">1</span>)</span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>        dest.write(mires, <span class="dv">2</span>)</span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>        dest.write(roads, <span class="dv">3</span>)</span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>        dest.write(watercourses, <span class="dv">4</span>)</span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>        dest.write(waterbodies, <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>indir <span class="op">=</span> Path(<span class="st">'../results/raw/'</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>outdir <span class="op">=</span> Path(<span class="st">'../results/processed/'</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> f <span class="kw">in</span> tqdm(os.listdir(indir)):</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    run_postproc_chain(indir<span class="op">/</span>f, outdir<span class="op">/</span>f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>100%|█████████████████████████████████████████████████████████████████████████████████| 18/18 [01:29&lt;00:00,  4.95s/it]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="evaluating-post-processed-test-set" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Evaluating post-processed test set</h1>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rio.<span class="bu">open</span>(<span class="st">'../results/processed/213405_1965.tif'</span>) <span class="im">as</span> pred_src:</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    bounds_test <span class="op">=</span> pred_src.bounds</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    preds_65_proc_raw, tfm_65 <span class="op">=</span> rio_mask.mask(pred_src, [box(<span class="op">*</span>bounds_test).intersection(box(<span class="op">*</span>bounds_65))], crop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>preds_65_proc <span class="op">=</span> np.zeros((preds_65_proc_raw.shape[<span class="dv">1</span>], preds_65_proc_raw.shape[<span class="dv">2</span>]))</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>preds_65_proc[preds_65_proc_raw[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>preds_65_proc[preds_65_proc_raw[<span class="dv">1</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>preds_65_proc[preds_65_proc_raw[<span class="dv">2</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>preds_65_proc[preds_65_proc_raw[<span class="dv">3</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>preds_65_proc[preds_65_proc_raw[<span class="dv">4</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> colors</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>cmap <span class="op">=</span> colors.ListedColormap([<span class="st">'white'</span>, <span class="st">'tab:orange'</span>, <span class="st">'tab:grey'</span>, <span class="st">'tab:red'</span>, <span class="st">'tab:cyan'</span>, <span class="st">'tab:blue'</span>])</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>bounds<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>]</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> colors.BoundaryNorm(bounds, cmap.N)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(test_mask_65, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'Targets 65'</span>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(preds_65_proc, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">'Processed predictions 65'</span>)</span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-27-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rio.<span class="bu">open</span>(<span class="st">'../results/processed/213405_1984.tif'</span>) <span class="im">as</span> pred_src:</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    bounds_test <span class="op">=</span> pred_src.bounds</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    preds_84_proc_raw, tfm_84 <span class="op">=</span> rio_mask.mask(pred_src, [box(<span class="op">*</span>bounds_test).intersection(box(<span class="op">*</span>bounds_84))], crop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>preds_84_proc <span class="op">=</span> np.zeros((preds_84_proc_raw.shape[<span class="dv">1</span>], preds_84_proc_raw.shape[<span class="dv">2</span>]))</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>preds_84_proc[preds_84_proc_raw[<span class="dv">0</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>preds_84_proc[preds_84_proc_raw[<span class="dv">1</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>preds_84_proc[preds_84_proc_raw[<span class="dv">2</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>preds_84_proc[preds_84_proc_raw[<span class="dv">3</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>preds_84_proc[preds_84_proc_raw[<span class="dv">4</span>] <span class="op">==</span> <span class="dv">1</span>] <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(test_mask_84, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'Targets 84'</span>)</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(preds_84_proc, vmin<span class="op">=</span><span class="dv">0</span>, vmax<span class="op">=</span><span class="dv">5</span>, cmap<span class="op">=</span>cmap, interpolation<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">'Processed predictions 84'</span>)</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-28-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Evaluate post-processed predictions.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>classes <span class="op">=</span> [<span class="st">'Fields'</span>, <span class="st">'Mires'</span>, <span class="st">'Roads'</span>, <span class="st">'Watercourses'</span>, <span class="st">'Water bodies'</span>]</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>dices_65 <span class="op">=</span> []</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>dices_84 <span class="op">=</span> []</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>ious_65 <span class="op">=</span> []</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>ious_84 <span class="op">=</span> []</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="dv">5</span>):</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    dice_65 <span class="op">=</span> dice(test_mask_65, preds_65_proc, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    dice_84 <span class="op">=</span> dice(test_mask_84, preds_84_proc, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    dices_65.append(dice_65)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    dices_84.append(dice_84)</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    iou_65 <span class="op">=</span> jaccard(test_mask_65, preds_65_proc, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>    iou_84 <span class="op">=</span> jaccard(test_mask_84, preds_84_proc, c<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>    ious_65.append(iou_65)</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    ious_84.append(iou_84)</span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Results for class </span><span class="sc">{</span>classes[c]<span class="sc">}</span><span class="ss">:'</span>)</span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Dice: 65 map: </span><span class="sc">{</span>dice_65<span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span>dice_84<span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(dice_65<span class="op">+</span>dice_84)<span class="op">/</span><span class="dv">2</span><span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Jaccard: 65 map: </span><span class="sc">{</span>iou_65<span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span>iou_84<span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(iou_65<span class="op">+</span>iou_84)<span class="op">/</span><span class="dv">2</span><span class="sc">:.3f}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Overall results:'</span>)</span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Dice: 65 map: </span><span class="sc">{</span><span class="bu">sum</span>(dices_65)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span><span class="bu">sum</span>(dices_84)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(<span class="bu">sum</span>(dices_65)<span class="op">+</span><span class="bu">sum</span>(dices_84))<span class="op">/</span><span class="dv">10</span><span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Jaccard: 65 map: </span><span class="sc">{</span><span class="bu">sum</span>(ious_65)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, 84 map: </span><span class="sc">{</span><span class="bu">sum</span>(ious_84)<span class="op">/</span><span class="dv">5</span><span class="sc">:.3f}</span><span class="ss">, overall </span><span class="sc">{</span>(<span class="bu">sum</span>(ious_65)<span class="op">+</span><span class="bu">sum</span>(ious_84))<span class="op">/</span><span class="dv">10</span><span class="sc">:.3f}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Results for class Fields:
+Dice: 65 map: 0.931, 84 map: 0.934, overall 0.933
+Jaccard: 65 map: 0.872, 84 map: 0.876, overall 0.874
+
+Results for class Mires:
+Dice: 65 map: 0.878, 84 map: 0.823, overall 0.850
+Jaccard: 65 map: 0.783, 84 map: 0.699, overall 0.741
+
+Results for class Roads:
+Dice: 65 map: 0.868, 84 map: 0.816, overall 0.842
+Jaccard: 65 map: 0.767, 84 map: 0.689, overall 0.728
+
+Results for class Watercourses:
+Dice: 65 map: 0.755, 84 map: 0.742, overall 0.749
+Jaccard: 65 map: 0.607, 84 map: 0.590, overall 0.598
+
+Results for class Water bodies:
+Dice: 65 map: 0.988, 84 map: 0.985, overall 0.986
+Jaccard: 65 map: 0.975, 84 map: 0.971, overall 0.973
+
+Overall results:
+Dice: 65 map: 0.884, 84 map: 0.860, overall 0.872
+Jaccard: 65 map: 0.801, 84 map: 0.765, overall 0.783</code></pre>
+</div>
+</div>
+</section>
+<section id="generate-polygon-and-line-data" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Generate polygon and line data</h1>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> fiona</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio <span class="im">import</span> features</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> centerline.geometry <span class="im">import</span> Centerline</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.auto <span class="im">import</span> tqdm</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>tqdm.pandas()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>For roads and watercourses, raster data is not that useful. These classes are converted into line geometries using the following steps:</p>
+<ol type="1">
+<li>Skeletonize the rasters</li>
+<li>Polygonize the skeletonized rasters</li>
+<li>Buffer these polygons by 10 meters and merge touching polygons</li>
+<li>Erode these polygons by 10 meters</li>
+<li>Use <code>centerline</code> library to convert polygons into line geometries</li>
+</ol>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>ex_fn <span class="op">=</span> <span class="st">'../results/processed/213411_1965.tif'</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> rio.<span class="bu">open</span>(ex_fn) <span class="im">as</span> src:</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    road_data <span class="op">=</span> src.read(<span class="dv">3</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>    ww_data <span class="op">=</span> src.read(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="roads-1" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="roads-1"><span class="header-section-number">4.1</span> Roads</h2>
+<p>Skeletonizing.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(road_data, cmap<span class="op">=</span><span class="st">'binary'</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'Processed rasters'</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(skeletonize(cv2.erode(road_data, np.ones((<span class="dv">3</span>,<span class="dv">3</span>), np.uint8), iterations<span class="op">=</span><span class="dv">1</span>)), cmap<span class="op">=</span><span class="st">'binary'</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-32-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Then data are converted to polygons, buffered and merged, and <code>centerline.geometry.Centerline</code> is used to get line geometries from the data.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>polys <span class="op">=</span> gpd.read_file(<span class="st">'../results/polygons/roads/213411_1965.geojson'</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>lines <span class="op">=</span> gpd.read_file(<span class="st">'../results/lines/roads/213411_1965.geojson'</span>)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>lines.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;AxesSubplot: &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-33-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>As there were still some faulty locations (remnants from red numbers, for instance), we removed all line segments that were less than 100 meters long.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>lines[lines.length <span class="op">&gt;</span> <span class="dv">100</span>].plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;AxesSubplot: &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-34-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="watercourses-1" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="watercourses-1"><span class="header-section-number">4.2</span> Watercourses</h2>
+<p>Skeletonizing</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>fig, axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(ww_data, cmap<span class="op">=</span><span class="st">'binary'</span>)</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'Processed rasters'</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(skeletonize(cv2.erode(ww_data, np.ones((<span class="dv">3</span>,<span class="dv">3</span>), np.uint8), iterations<span class="op">=</span><span class="dv">1</span>)), cmap<span class="op">=</span><span class="st">'binary'</span>)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-35-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>polys <span class="op">=</span> gpd.read_file(<span class="st">'../results/polygons/watercourses/213411_1965.geojson'</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>lines <span class="op">=</span> gpd.read_file(<span class="st">'../results/lines/watercourses/213411_1965.geojson'</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>lines.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;AxesSubplot: &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="postprocessings_files/figure-html/cell-36-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="./train_model.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Train model</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./change_analysis.html" class="pagination-link">
+        <span class="nav-page-text">Change analysis</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

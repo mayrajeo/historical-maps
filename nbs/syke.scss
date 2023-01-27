@@ -33,7 +33,16 @@ $selection-bg: $syke-red !default;
 $border-color: $text-muted !default;
 $code-block-border-color: $text-muted !default;
 
-$primary:   $syke-darkgreen !default;
+$primary:       $syke-darkgreen !default;
+$secondary:     $syke-green !default;
+$success:       $syke-blue !default;
+$info:          $syke-red !default;
+$warning:       $syke-lightred !default;
+$danger:        $syke-darkred !default;
+$light:         $syke-gray !default;
+$dark:          $syke-darkgray !default;
+
+$min-contrast-ratio:    1.36 !default;
 
 // Options
 
@@ -41,11 +50,18 @@ $enable-rounded: false !default;
 
 // Body
 
-$body-color: $syke-darkgreen !default;
+$body-color: $primary !default;
+
+// Links
+
+$link-hover-color: $secondary !default;
+
+// Tables
+
+$table-border-color: $primary !default;
 
 // Fonts
 $font-family-sans-serif: "Poppins", sans-serif !default;
-$headings-font-weight: 400 !default;
 
 
 //havbar
@@ -53,60 +69,142 @@ $headings-font-weight: 400 !default;
 /*-- scss:rules --*/
 
 
-//logo
-.reveal .slide-logo {
-  position: absolute !important;
-  right: 40px !important;
-  bottom: 40px !important;
-  height: auto !important;
-  width: auto!important;
-  max-width: 20% !important;
-  max-height: 20% !important;
-}
+// Buttons
 
-
-// title slide
-.title {
-  font-size: $title-font-size !important;
-  color: $body-color !important;
-}
-.subtitle, 
-.author{
-  font-size: $title-font-size 30% !important;
-}
-.date, 
-.institute{
-  font-size: $title-font-size 20% !important;
-}
-
-
-//highlight for text
-.highlight {
-  visibility: true;
-  color: $syke-red !important;
-  font-weight: bold !important;
-}
-
-// brand colors for text
-.syke-darkgreen{
-  color: $syke-darkgreen !important;
-}
-.syke-green{
-  color: $syke-green !important;
-}
-.syke-red{
-  color: $syke-red !important;
-}
-.syke-blue{
-  color: $syke-blue !important;
-}
-
-.syke-gray{
-  color: $syke-gray !important;
-}
-
-
-
-
-/*-- scss:mixins --*/
-
+.btn {
+    &:focus,
+    &:active,
+    &:active:focus,
+    &.active:focus {
+      outline: none;
+    }
+  
+    &-secondary {
+      background-color: $white;
+      border-color: #ccc;
+      color: $gray-900;
+  
+      &:hover {
+        background-color: $gray-300;
+        border-color: $gray-500;
+        color: $gray-900;
+      }
+  
+      &.disabled {
+        background-color: $white;
+        border-color: tint-color(#ccc, 5%);
+        color: tint-color($gray-900, 5%);
+      }
+    }
+  
+    &-warning {
+      color: $white;
+    }
+  
+    &-primary:focus {
+      box-shadow: 0 0 5px tint-color($primary, 10%);
+    }
+  
+    &-secondary:focus {
+      box-shadow: 0 0 5px $gray-400;
+    }
+  
+    &-success:focus {
+      box-shadow: 0 0 5px tint-color($success, 10%);
+    }
+  
+    &-info:focus {
+      box-shadow: 0 0 5px tint-color($info, 10%);
+    }
+  
+    &-warning:focus {
+      box-shadow: 0 0 5px tint-color($warning, 10%);
+    }
+  
+    &-danger:focus {
+      box-shadow: 0 0 5px tint-color($danger, 10%);
+    }
+  
+    &.disabled:focus {
+      box-shadow: none;
+    }
+  }
+  
+  // Tables
+  
+  .table .thead-dark th {
+    background-color: $secondary;
+    border-color: $table-border-color;
+  }
+  
+  // Forms
+  
+  .form-control:focus {
+    box-shadow: 0 0 5px rgba(100, 65, 164, .4);
+  }
+  
+  // Navs
+  
+  .nav-tabs {
+    .nav-link,
+    .nav-link.active, {
+      border-width: 0 0 1px;
+    }
+  
+    .nav-link:hover,
+    .nav-link.active,
+    .nav-link.active:hover,
+    .nav-link.active:focus {
+      border-bottom: 1px solid $primary;
+    }
+  
+    .nav-item + .nav-item {
+      margin-left: 0;
+    }
+  }
+  
+  .breadcrumb {
+    &-item.active {
+      color: $gray-700;
+    }
+  }
+  
+  // Indicators
+  
+  .badge {
+    &.bg-light {
+      color: $dark;
+    }
+  }
+  
+  // Progress bars
+  
+  .progress {
+    height: 8px;
+  }
+  
+  // Containers
+  
+  .list-group {
+    &-item {
+      color: rgba(255, 255, 255, .8);
+  
+      &.active,
+      &:hover,
+      &:focus {
+        color: $white;
+      }
+  
+      &.active {
+        font-weight: 700;
+  
+        &:hover {
+          background-color: $list-group-hover-bg;
+        }
+      }
+  
+      &.disabled:hover {
+        color: $list-group-disabled-color;
+      }
+    }
+  }

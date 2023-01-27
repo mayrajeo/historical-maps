@@ -15,8 +15,8 @@ project:
       
 format:
   html:
-    theme: spacelab
-    css: styles.css
+    theme: syke.scss
+#    css: styles.css
     toc: true
     page-layout: full
     

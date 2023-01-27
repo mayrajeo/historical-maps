@@ -1,0 +1,166 @@
+/*-- scss:defaults --*/
+
+$theme: "syke" !default;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+// Color system
+// Main colors
+$white: #fff !default;
+$syke-darkgreen: #005854 !default;
+$syke-green: #84C497 !default;
+$syke-red: #F28E77 !default;
+$syke-blue: #64C1CB !default;
+$syke-gray: #E4E3DE !default;
+$black: #000 !default;
+
+// Additional colors
+
+$syke-lightgreen: #C7E3D2 !default;
+$syke-lightred: #FCD9C9 !default;
+$syke-darkred: #B34733 !default;
+$syke-lightblue: #CFE9EA !default;
+$syke-darkblue: #006085 !default;
+$syke-lightyellow: #FED992 !default;
+$syke-darkgray: #575756 !default;
+$syke-ocra: #BB5B0F !default;
+
+$body-color: $syke-darkgreen !default;
+$link-color: $syke-red !default;
+$text-muted: darken($syke-gray, 20%) !default;
+$selection-bg: $syke-red !default;
+$border-color: $text-muted !default;
+$code-block-border-color: $text-muted !default;
+
+$primary: $syke-darkgreen !default;
+$secondary: $syke-green !default;
+$success: $syke-blue !default;
+$info: $syke-red !default;
+$warning: $syke-lightred !default;
+$danger: $syke-darkred !default;
+$light: $syke-gray !default;
+$dark: $syke-darkgray !default;
+
+$min-contrast-ratio: 1.36 !default;
+
+// Options
+
+$enable-rounded: false !default;
+
+// Body
+
+$body-color: $primary !default;
+
+// Links
+
+$link-hover-color: $secondary !default;
+
+// Tables
+
+$table-border-color: $primary !default;
+
+// Fonts
+$font-family-sans-serif: "Poppins", sans-serif !default;
+
+// Sidebar
+
+$sidebar-fg: $primary;
+$sidebar-hl: $secondary;
+
+// TOC
+
+$toc-color: $primary;
+$toc-active-border: $syke-red;
+
+
+/*-- scss:rules --*/
+
+
+// Buttons
+
+// Tables
+
+.table .thead-dark th {
+    background-color: $secondary;
+    border-color: $table-border-color;
+}
+
+// Blockquotes
+
+.blockquote {
+    background-color: $primary;
+    color: $white;
+}
+
+
+// Numbered headers
+
+.header-section-number {
+    color: $secondary;
+}
+
+// Forms
+
+
+// Navs
+
+.nav-tabs {
+    .nav-link,
+    .nav-link.active,
+    {
+    border-width: 0 0 1px;
+    color: $secondary;
+}
+
+.nav-link:hover,
+.nav-link.active,
+.nav-link.active:hover,
+.nav-link.active:focus {
+    border-bottom: 1px solid $primary;
+}
+
+.nav-item+.nav-item {
+    margin-left: 0;
+}
+}
+
+
+// Indicators
+
+.badge {
+    &.bg-light {
+        color: $dark;
+    }
+}
+
+// Progress bars
+
+.progress {
+    height: 8px;
+}
+
+// Containers
+
+.list-group {
+    &-item {
+        color: rgba(255, 255, 255, .8);
+
+        &.active,
+        &:hover,
+        &:focus {
+            color: $white;
+        }
+
+        &.active {
+            font-weight: 700;
+
+            &:hover {
+                background-color: $list-group-hover-bg;
+            }
+        }
+
+        &.disabled:hover {
+            color: $list-group-disabled-color;
+        }
+    }
+}

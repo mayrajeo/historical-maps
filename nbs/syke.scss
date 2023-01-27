@@ -1,0 +1,89 @@
+/*-- scss:defaults --*/
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+// fonts
+$font-family-sans-serif: "Poppins", sans-serif !default;
+//$presentation-heading-font: "Poppins", sans-serif !default;
+$title-font-size: 80px;
+
+//colors
+// brand colors
+$syke-darkgreen: #005854 !default;
+$syke-green: #84C497 !default;
+$syke-red: #F28E77 !default;
+$syke-blue: #64C1CB !default;
+$syke-gray: #E4E3DE !default;
+
+//$body-bg: $vesi-dark !default;
+$body-color: $syke-darkgreen !default;
+$link-color: $syke-red !default;
+$text-muted: darken($syke-gray, 20%) !default;
+$selection-bg: $syke-red !default;
+$border-color: $text-muted !default;
+$code-block-border-color: $text-muted !default;
+
+//headings
+//$presentation-heading-color: $syke-darkgreen !default;
+$presentation-heading-font-weight: 600;
+
+
+/*-- scss:rules --*/
+
+//logo
+.reveal .slide-logo {
+  position: absolute !important;
+  right: 40px !important;
+  bottom: 40px !important;
+  height: auto !important;
+  width: auto!important;
+  max-width: 20% !important;
+  max-height: 20% !important;
+}
+
+
+// title slide
+.title {
+  font-size: $title-font-size !important;
+  color: $body-color !important;
+}
+.subtitle, 
+.author{
+  font-size: $title-font-size 30% !important;
+}
+.date, 
+.institute{
+  font-size: $title-font-size 20% !important;
+}
+
+
+//highlight for text
+.highlight {
+  visibility: true;
+  color: $syke-red !important;
+  font-weight: bold !important;
+}
+
+// brand colors for text
+.syke-darkgreen{
+  color: $syke-darkgreen !important;
+}
+.syke-green{
+  color: $syke-green !important;
+}
+.syke-red{
+  color: $syke-red !important;
+}
+.syke-blue{
+  color: $syke-blue !important;
+}
+
+.syke-gray{
+  color: $syke-gray !important;
+}
+
+
+
+
+/*-- scss:mixins --*/
+

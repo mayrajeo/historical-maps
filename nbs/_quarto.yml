@@ -16,7 +16,6 @@ project:
 format:
   html:
     theme: syke.scss
-#    css: styles.css
     toc: true
     page-layout: full
     

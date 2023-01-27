@@ -15,7 +15,6 @@ $syke-gray: #E4E3DE !default;
 $black: #000 !default;
 
 // Additional colors
-
 $syke-lightgreen: #C7E3D2 !default;
 $syke-lightred: #FCD9C9 !default;
 $syke-darkred: #B34733 !default;
@@ -25,23 +24,26 @@ $syke-lightyellow: #FED992 !default;
 $syke-darkgray: #575756 !default;
 $syke-ocra: #BB5B0F !default;
 
+// Definitions
 $body-color: $syke-darkgreen !default;
-$link-color: $syke-red !default;
-$text-muted: darken($syke-gray, 20%) !default;
+$link-color: $syke-blue !default;
 $selection-bg: $syke-red !default;
-$border-color: $text-muted !default;
-$code-block-border-color: $text-muted !default;
 
 $primary: $syke-darkgreen !default;
 $secondary: $syke-green !default;
-$success: $syke-blue !default;
-$info: $syke-red !default;
+$success: $syke-red !default;
+$info: $syke-blue !default;
 $warning: $syke-lightred !default;
 $danger: $syke-darkred !default;
 $light: $syke-gray !default;
 $dark: $syke-darkgray !default;
 
 $min-contrast-ratio: 1.36 !default;
+
+$code-block-bg: $syke-gray;
+
+$code-color: $black;
+$code-bg: $syke-gray;
 
 // Options
 
@@ -61,28 +63,27 @@ $table-border-color: $primary !default;
 
 // Fonts
 $font-family-sans-serif: "Poppins", sans-serif !default;
+$font-size: 12px;
+
+$h1-font-size:40px;
+$h2-font-size:35px;
+$h3-font-size:30px;
+$h4-font-size:25px;
+$h5-font-size:20px;
+$h6-font-size:15px;
 
 // Sidebar
 
+$sidebar-hl: $link-color; // doesn't work for some stupid reason
 $sidebar-fg: $primary;
-$sidebar-hl: $secondary;
 
 // Navbar
 
-$navbar-fg: $primary;
-$navbar-hl: 
+$navbar-bg: $primary;
+$navbar-fg: $white;
 
 /*-- scss:rules --*/
 
-
-// Buttons
-
-// Tables
-
-.table .thead-dark th {
-    background-color: $secondary;
-    border-color: $table-border-color;
-}
 
 // Blockquotes
 
@@ -91,75 +92,8 @@ $navbar-hl:
     color: $white;
 }
 
-
-// Numbered headers
+// Numbered headers coloring
 
 .header-section-number {
     color: $secondary;
-}
-
-// Forms
-
-
-// Navs
-
-.nav-tabs {
-    .nav-link,
-    .nav-link.active,
-    {
-    border-width: 0 0 1px;
-    color: $secondary;
-}
-
-.nav-link:hover,
-.nav-link.active,
-.nav-link.active:hover,
-.nav-link.active:focus {
-    border-bottom: 1px solid $primary;
-}
-
-.nav-item+.nav-item {
-    margin-left: 0;
-}
-}
-
-
-// Indicators
-
-.badge {
-    &.bg-light {
-        color: $dark;
-    }
-}
-
-// Progress bars
-
-.progress {
-    height: 8px;
-}
-
-// Containers
-
-.list-group {
-    &-item {
-        color: rgba(255, 255, 255, .8);
-
-        &.active,
-        &:hover,
-        &:focus {
-            color: $white;
-        }
-
-        &.active {
-            font-weight: 700;
-
-            &:hover {
-                background-color: $list-group-hover-bg;
-            }
-        }
-
-        &.disabled:hover {
-            color: $list-group-disabled-color;
-        }
-    }
 }

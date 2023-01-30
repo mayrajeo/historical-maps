@@ -74,13 +74,19 @@ $h6-font-size:15px;
 
 // Sidebar
 
-$sidebar-hl: $link-color; // doesn't work for some stupid reason
+$sidebar-bg: transparent;
 $sidebar-fg: $primary;
+$sidebar-hl: $link-color;
 
 // Navbar
 
 $navbar-bg: $primary;
 $navbar-fg: $white;
+
+// TOC
+
+$toc-active-border: $link-color;
+$toc-inactive-border: $primary; 
 
 /*-- scss:rules --*/
 
@@ -90,6 +96,7 @@ $navbar-fg: $white;
 .blockquote {
     background-color: $primary;
     color: $white;
+    border-left: 0;
 }
 
 // Numbered headers coloring

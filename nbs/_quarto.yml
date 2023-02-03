@@ -27,7 +27,7 @@ website:
   open-graph: true
   reader-mode: true
   repo-branch: main
-  repo-subdir: notebooks
+  repo-subdir: nbs
   repo-url: https://github.com/mayrajeo/historical-maps/
   repo-actions: [source]
   navbar:

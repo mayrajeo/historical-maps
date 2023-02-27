@@ -1,5 +1,7 @@
 # Utilizing historical maps in identification of long-term land use changes
 
+Published in Ambio: [DOI: 10.1007/s13280-023-01838-z](http://dx.doi.org/10.1007/s13280-023-01838-z)
+
 ## Abstract
 
 > Knowledge in the magnitude and historical trends in land use and land cover (LULC) is needed to understand the changing status of the key elements of the landscape and to better target management efforts. However, this information is not easily available before the start of satellite campaign missions. Scanned historical maps are a valuable but underused source of LULC information. As a case study, we used U-Net to automatically extract fields, mires, roads, watercourses, and water bodies from scanned historical maps, dated 1965, 1984 and 1985 for our 900 km² study area in Southern Finland. We then used these data, along with the topographic databases from 2005 and 2022, to quantify the LULC changes for the past 57 years. For example, the total area of fields decreased by around 27 km², and the total length of watercourses increased by around 2250 km in our study area.
@@ -22,7 +24,7 @@ Much of the work relies heavily on https://github.com/jaeeolma/drone_detector, a
 * Laura Poikolainen, University of Eastern Finland
 * Timo Kumpula, University of Eastern Finland
 
-## Acknowleggments
+## Acknowledgments
 
 The authors wish to acknowledge CSC – IT Center for Science, Finland, for computational resources.
 
